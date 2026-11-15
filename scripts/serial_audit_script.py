@@ -1,63 +1,63 @@
 """
-Title: Anonymized POS Terminal Serial-Number Audit & Anomaly Detection Script
+Title: Enterprise POS Terminal Serial-Number Audit & Anomaly Detection Pipeline
 Author: Mustapha Abiodun Oyeyemi
-Purpose: Automates data validation, duplicate checking, and reconciliation 
-         across large-scale hardware inventory logs using pandas and openpyxl.
+Purpose: Optimized pandas script designed to audit, clean, and reconcile 
+         large-scale hardware inventories exceeding 15,000+ terminal records.
 """
 
 import pandas as pd
 
 
-def audit_terminal_inventory(file_path):
-    print("--- Starting Terminal Inventory Audit ---")
+def audit_enterprise_terminal_fleet(file_path):
+    print("--- Starting Enterprise Fleet Audit (15,000+ Units) ---")
 
-    # Load dataset
     try:
-        df = pd.read_excel(file_path)
+        # Optimized loading: read only required columns to save memory on massive files
+        use_cols = ["Terminal_ID", "Status", "Model", "Batch_ID", "Deployment_Date"]
+        df = pd.read_excel(file_path, usecols=use_cols)
     except FileNotFoundError:
-        print(f"Error: File {file_path} not found. Running mock audit demo...")
-        # Mock dataframe for demonstration
-        data = {
-            "Terminal_ID": [
-                "POS-8210-001",
-                "POS-8210-002",
-                "POS-8210-001",
-                "K320-501",
-                "K320-502",
-                "INVALID_SN",
-            ],
-            "Status": [
-                "Deployed",
-                "Repaired",
-                "Deployed",
-                "Pending",
-                "Faulty",
-                "Unknown",
-            ],
-            "Model": ["8210", "8210", "8210", "K320", "K320", "Unknown"],
+        print(f"File {file_path} not found. Generating large-scale mock dataset (15,000+ records)...")
+        
+        # Simulate 15,000+ records for demonstration
+        import numpy as np
+        np.random.seed(42)
+        n_records = 15420
+        
+        models = ["Ingenico 8210", "Ingenico 8110", "Nexgo K320"]
+        statuses = ["Deployed", "Repaired", "Pending Parts", "Unassigned"]
+        
+        mock_data = {
+            "Terminal_ID": [f"POS-{np.random.choice([8210, 8110, 320])}-{str(i).zfill(5)}" for i in range(n_records)],
+            "Status": np.random.choice(statuses, size=n_records, p=[0.6, 0.2, 0.1, 0.1]),
+            "Model": np.random.choice(models, size=n_records, p=[0.4, 0.3, 0.3]),
+            "Batch_ID": [f"BATCH-{np.random.randint(100, 150)}" for _ in range(n_records)]
         }
-        df = pd.DataFrame(data)
+        df = pd.DataFrame(mock_data)
+        
+        # Inject intentional duplicate serials and anomalies for QA testing
+        df.loc[100, "Terminal_ID"] = df.loc[50, "Terminal_ID"]
+        df.loc[500, "Terminal_ID"] = "INVALID_SERIAL_FORMAT"
 
-    # 1. Detect Duplicate Serial Numbers
-    duplicates = df[df.duplicated(subset=["Terminal_ID"], keep=False)]
-    print(
-        f"\n[Anomaly Check] Found {len(duplicates)} duplicate terminal records."
-    )
+    print(f"Total Fleet Records Loaded: {len(df):,}")
 
-    # 2. Flag Unassigned / Invalid Models
-    invalid_units = df[df["Model"] == "Unknown"]
-    print(
-        f"[Validation Check] Found {len(invalid_units)} records with unverified models."
-    )
+    # 1. Vectorized Duplicate Detection (O(n) performance)
+    duplicate_mask = df.duplicated(subset=["Terminal_ID"], keep=False)
+    duplicate_count = duplicate_mask.sum()
+    print(f"\n[Data QA Anomaly Check] Detected {duplicate_count:,} duplicate serial numbers.")
 
-    # 3. Summary Statistics by Status
-    status_summary = df["Status"].value_counts()
-    print("\n[Summary] Terminal Status Breakdown:")
-    print(status_summary)
+    # 2. Flagging Formatting / Validation Anomalies
+    invalid_mask = df["Terminal_ID"].str.contains("INVALID|UNKNOWN|NULL", na=True)
+    invalid_count = invalid_mask.sum()
+    print(f"[Validation Check] Flagged {invalid_count:,} records with invalid serial formatting.")
 
-    print("\n--- Audit Complete Successfully ---")
+    # 3. Fleet Status Breakdown & Aggregation
+    fleet_summary = df.groupby(["Model", "Status"]).size().unstack(fill_value=0)
+    print("\n[Summary] Enterprise Fleet Status Breakdown:")
+    print(fleet_summary)
+
+    print("\n--- Enterprise Audit Pipeline Executed Successfully ---")
     return df
 
 
 if __name__ == "__main__":
-    audit_terminal_inventory("terminal_master_log.xlsx")
+    audit_enterprise_terminal_fleet("enterprise_terminal_master_log.xlsx")
