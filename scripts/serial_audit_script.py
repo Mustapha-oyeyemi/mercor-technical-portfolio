@@ -1,10 +1,11 @@
 """
 Title: Enterprise POS Terminal Serial-Number Audit & Anomaly Detection Pipeline
 Author: Mustapha Abiodun Oyeyemi
-Purpose: Optimized pandas script designed to audit, clean, and reconcile 
+Purpose: Optimized pandas/numpy script designed to audit, clean, and reconcile 
          large-scale hardware inventories exceeding 15,000+ terminal records.
 """
 
+import numpy as np
 import pandas as pd
 
 
@@ -16,10 +17,9 @@ def audit_enterprise_terminal_fleet(file_path):
         use_cols = ["Terminal_ID", "Status", "Model", "Batch_ID", "Deployment_Date"]
         df = pd.read_excel(file_path, usecols=use_cols)
     except FileNotFoundError:
-        print(f"File {file_path} not found. Generating large-scale mock dataset (15,000+ records)...")
+        print(f"File {file_path} not found. Generating large-scale synthetic benchmark (15,000+ records)...")
         
-        # Simulate 15,000+ records for demonstration
-        import numpy as np
+        # Simulate 15,000+ records using numpy for standalone portfolio benchmarking
         np.random.seed(42)
         n_records = 15420
         
