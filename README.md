@@ -10,7 +10,7 @@ This portfolio demonstrates practical competence in auditing high-volume operati
 
 1. **[Python/Excel Serial-Number Audit Script](scripts/serial_audit_script.py)**
    - **Domain:** Data QA & Inventory Reconciliation.
-   - **Description:** An anonymized Python script utilizing `pandas` and `openpyxl` to parse bulk POS terminal logs, detect duplicate serial numbers, flag formatting anomalies, and automate reconciliation reports.
+   - **Description:** An anonymized, vectorized Python pipeline utilizing `pandas` and `numpy` to audit 15,000+ POS terminal logs, detect duplicate serial numbers in $O(n)$ time, flag formatting anomalies, and automate fleet status reports.
 
 2. **[LLM Physics & Logic Response Evaluation](evaluations/llm_physics_evaluation.md)**
    - **Domain:** AI Model Evaluation & Error Spotting.
