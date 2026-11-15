@@ -1,57 +1,33 @@
-# LLM Evaluation Sample: Classical Mechanics & Logical Reasoning
-
-**Domain:** Physics / Quantitative Reasoning  
-**Task Type:** Step-by-Step Error Detection, Hallucination Analysis & Gold-Standard Rewrite  
-
----
-
-## 1. User Prompt
-> A 4.0 kg block is pushed up a rough incline angled at $30^\circ$ above the horizontal by a constant horizontal force of $F = 50\text{ N}$. If the coefficient of kinetic friction between the block and the incline is $\mu_k = 0.25$, calculate the acceleration of the block up the incline. (Use $g = 9.8\text{ m/s}^2$).
+# LLM Physics & Logic Response Evaluation Report
+**Evaluator:** Mustapha Abiodun Oyeyemi (B.Sc. Physics, LASU)  
+**Evaluation Scope:** Assessing AI model output accuracy, scientific reasoning rigor, and edge-case handling across 3 physics prompts.
 
 ---
 
-## 2. Model Response (Evaluated Output)
-> To find the acceleration of the block, we resolve the forces along the incline:
-> 1. **Gravity component down the incline:**  
->    $$F_{g,\parallel} = mg \sin(30^\circ) = 4.0 \times 9.8 \times 0.5 = 19.6\text{ N}$$
-> 2. **Normal force:**  
->    $$N = mg \cos(30^\circ) = 4.0 \times 9.8 \times 0.866 = 33.95\text{ N}$$
-> 3. **Kinetic friction force:**  
->    $$f_k = \mu_k N = 0.25 \times 33.95 = 8.49\text{ N}$$
-> 4. **Applied force up the incline:**  
->    Since the force is $50\text{ N}$, the net force is:  
->    $$F_{\text{net}} = 50 - 19.6 - 8.49 = 21.91\text{ N}$$
-> 5. **Acceleration:**  
->    $$a = \frac{F_{\text{net}}}{m} = \frac{21.91}{4.0} = 5.48\text{ m/s}^2$$
+## Prompt 1: Projectile Motion with Air Resistance
+* **Prompt:** *"Calculate the final impact velocity of a 2kg spherical projectile launched at 45 degrees with an initial speed of 25 m/s, accounting for quadratic drag."*
+* **Model Response Summary:** The model applied standard kinematic equations ignoring drag, then attempted to tack on a linear drag correction factor without adjusting differential equations.
+* **Rubric Scoring:**
+  - *Accuracy:* Fail. Quadratic drag requires numerical integration or empirical drag coefficients ($F_d = \frac{1}{2}\rho v^2 C_d A$), which the model omitted.
+  - *Reasoning:* Partial. Recognized that drag reduces range, but failed to apply correct vector decomposition.
+* **Correction & Feedback:** The model must state boundary constraints explicitly and use numerical stepping (Euler method or Runge-Kutta) rather than algebraic shortcuts when transitioning from vacuum physics to non-linear drag.
 
 ---
 
-## 3. Evaluator Critique & Error Analysis
-
-| Criterion | Rating | Findings |
-| :--- | :--- | :--- |
-| **Instruction Following** | Pass | Answered the target variable ($a$) with appropriate units. |
-| **Physics & Math Accuracy** | **Fail (Critical)** | Failed to resolve the **horizontal** applied force ($50\text{ N}$) into components parallel and perpendicular to the incline. |
-| **Logical Consistency** | **Fail** | Treated a horizontal vector as if it were applied parallel to a $30^\circ$ slope, and omitted its downward perpendicular contribution to the Normal Force ($N$). |
-
-### Detailed Breakdown of Errors:
-1. **Omitted Normal Force Component (Step 2):** Because the $50\text{ N}$ force is purely *horizontal*, it pushes the block into the incline with a perpendicular component of $F \sin(30^\circ)$. Therefore, $N = mg\cos(30^\circ) + F\sin(30^\circ)$, not just $mg\cos(30^\circ)$.
-2. **Unresolved Parallel Force Component (Step 4):** Only the component of $F$ parallel to the ramp drives the block upward: $F_{\parallel} = F \cos(30^\circ) \approx 43.30\text{ N}$, rather than the full $50\text{ N}$.
+## Prompt 2: Thermodynamic Efficiency & Heat Engines
+* **Prompt:** *"Explain why a Carnot engine operating between 500K and 300K cannot achieve 70% efficiency."*
+* **Model Response Summary:** The model correctly cited the Carnot efficiency formula ($\eta = 1 - \frac{T_C}{T_H}$), calculated max efficiency as $1 - \frac{300}{500} = 40\%$, and correctly proved why 70% violates the Second Law of Thermodynamics.
+* **Rubric Scoring:**
+  - *Accuracy:* Pass. Mathematical calculation and thermodynamic principle are flawless.
+  - *Clarity:* Pass. Explanations are concise and logically structured.
+* **Verdict:** Approved for deployment as high-quality educational text.
 
 ---
 
-## 4. Gold-Standard Correction
-
-1. **Resolve the Horizontal Force ($F = 50\text{ N}$):**
-   * Parallel to incline (upward): $F_{\parallel} = 50 \cos(30^\circ) \approx 43.30\text{ N}$
-   * Perpendicular to incline (into surface): $F_{\perp} = 50 \sin(30^\circ) = 25.00\text{ N}$
-
-2. **Calculate True Normal Force ($N$):**
-   $$N = mg \cos(30^\circ) + F_{\perp} = (4.0)(9.8)\cos(30^\circ) + 25.00 = 33.95 + 25.00 = 58.95\text{ N}$$
-
-3. **Calculate Kinetic Friction ($f_k$):**
-   $$f_k = \mu_k N = 0.25 \times 58.95 = 14.74\text{ N}$$
-
-4. **Calculate Net Force & Acceleration ($a$):**
-   $$F_{\text{net}} = F_{\parallel} - mg\sin(30^\circ) - f_k = 43.30 - 19.60 - 14.74 = 8.96\text{ N}$$
-   $$a = \frac{8.96\text{ N}}{4.0\text{ kg}} = 2.24\text{ m/s}^2$$
+## Prompt 3: Circuit Analysis (Kirchhoff's Laws)
+* **Prompt:** *"Find the current flowing through a 10-ohm resistor in a multi-loop DC bridge circuit."*
+* **Model Response Summary:** Set up correct node voltage equations but made an arithmetic sign error when transposing loop 2 currents across the shared resistor branch.
+* **Rubric Scoring:**
+  - *Accuracy:* Partial (Logical setup correct, arithmetic flawed).
+  - *Edge-Case Handling:* Fail. Failed to perform a power-balance check ($P_{supplied} = P_{dissipated}$) to self-audit its calculation.
+* **Correction & Feedback:** AI agents evaluating electrical or financial calculations must be prompted to execute sanity-check validations before outputting final numerical results.
